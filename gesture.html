@@ -8,22 +8,27 @@
 </head>
 <body>
   <div class="container">
-    <h2>Webcam Continuous Hand Gesture Detection</h2>
-    <p>Use your hand to make gestures in front of the camera to get gesture classification.<br>Click <b>Enable Webcam</b> below and grant access to the webcam if prompted.</p>
-
     <div id="liveView" class="video-container">
       <div class="loading-overlay" id="loading">Loading model...</div>
-      <button id="webcamButton" class="button">
-        <span>ENABLE WEBCAM</span>
-      </button>
-      <div style="position: relative;">
-        <video id="webcam" autoplay="" playsinline=""></video>
-        <canvas class="output_canvas" id="output_canvas" width="1280" height="720" style="position: absolute; left: 0px; top: 0px;"></canvas>
+      <div class="controls">
+        <label class="switch">
+          <input type="checkbox" id="webcamToggle" disabled>
+          <span class="slider"></span>
+          <span class="label">Webcam</span>
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="recognitionToggle" disabled>
+          <span class="slider"></span>
+          <span class="label">Recognition</span>
+        </label>
+      </div>
+      <div class="video-wrapper">
+        <video id="webcam" autoplay playsinline></video>
+        <canvas id="output_canvas"></canvas>
         <p id="gesture_output" class="output"></p>
       </div>
     </div>
   </div>
-
   <script type="module" src="gesture_recognition.js"></script>
 </body>
 </html>

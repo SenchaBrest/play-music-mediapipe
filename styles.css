@@ -1,91 +1,142 @@
-* {
-    box-sizing: border-box;
+body, html {
     margin: 0;
     padding: 0;
-  }
-  
-  body {
-    font-family: Arial, sans-serif;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    background-color: #f4f4f4;
-    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
   }
   
   .container {
-    text-align: center;
-    max-width: 800px;
     width: 100%;
-    margin: auto;
-  }
-  
-  h2 {
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  p {
-    color: #666;
-    margin-bottom: 30px;
-  }
-  
-  .button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 24px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .button:hover {
-    background-color: #45a049;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   
   .video-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  #webcam, #output_canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    max-width: 100vw;
+    transform: scaleX(-1); /* Зеркальное отображение */
+  }
+  
+  
+  .video-wrapper {
     position: relative;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
-    width: 100%;
-    max-width: 640px;
-    margin: 0 auto;
   }
   
-  video,
-  canvas {
-    width: 100%;
-    height: auto;
-    border: 2px solid #ddd;
-    border-radius: 8px;
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin: 0 10px;
   }
   
-  .output {
-    margin-top: 10px;
-    font-size: 18px;
-    color: #333;
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 3px;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 5%;
+  }
+  
+  input:checked + .slider {
+    background-color: #219c58;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+  
+  .controls {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%); 
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+  }
+  
+  .label {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    color: black;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
   }
   
   .loading-overlay {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    color: gray;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(255, 255, 255, 0.8);
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
-    border-radius: 8px;
     z-index: 10;
-    display: none;
   }
   
+  #gesture_output {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: red;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 0;
+    font-size: 16px;
+    z-index: 10;
+  }

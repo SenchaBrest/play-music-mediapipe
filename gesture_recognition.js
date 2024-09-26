@@ -1,15 +1,19 @@
 import { GestureRecognizer, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 
 let gestureRecognizer;
+let webcamStream = null;
 let runningMode = "IMAGE";
 let webcamRunning = false;
-const videoHeight = "360px";
-const videoWidth = "480px";
+let recognitionRunning = false;
 
 const loadingOverlay = document.getElementById("loading");
+const video = document.getElementById("webcam");
+const canvasElement = document.getElementById("output_canvas");
+const canvasCtx = canvasElement.getContext("2d");
+const gestureOutput = document.getElementById("gesture_output");
 
 const createGestureRecognizer = async () => {
-  loadingOverlay.style.display = "flex";  // Show loading overlay
+  loadingOverlay.style.display = "flex";
   const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
   gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
     baseOptions: {
@@ -18,7 +22,8 @@ const createGestureRecognizer = async () => {
     },
     runningMode: runningMode
   });
-  loadingOverlay.style.display = "none";  // Hide loading overlay when model is ready
+  loadingOverlay.style.display = "none";
+  enableWebcamButton();
 };
 
 createGestureRecognizer();
@@ -27,32 +32,80 @@ function hasGetUserMedia() {
   return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 }
 
-const video = document.getElementById("webcam");
-const canvasElement = document.getElementById("output_canvas");
-const canvasCtx = canvasElement.getContext("2d");
-const gestureOutput = document.getElementById("gesture_output");
-
 if (hasGetUserMedia()) {
-  const enableWebcamButton = document.getElementById("webcamButton");
-  enableWebcamButton.addEventListener("click", enableCam);
+  const webcamToggle = document.getElementById("webcamToggle");
+  const recognitionToggle = document.getElementById("recognitionToggle");
+
+  webcamToggle.addEventListener("change", toggleWebcam);
+  recognitionToggle.addEventListener("change", toggleRecognition);
 } else {
   console.warn("getUserMedia() is not supported by your browser");
 }
 
-function enableCam(event) {
-  if (!gestureRecognizer) {
-    alert("Please wait for gestureRecognizer to load");
+function enableWebcamButton() {
+  const webcamToggle = document.getElementById("webcamToggle");
+  webcamToggle.disabled = false;
+}
+
+function la(){
+  navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
+    webcamStream = stream;
+    video.srcObject = stream;
+    video.addEventListener("loadeddata", () => {
+      webcamRunning = true;
+      recognitionToggle.disabled = false;
+      resizeCanvasToMatchVideo();
+    });
+  });
+}
+
+function toggleWebcam() {
+  const webcamToggle = document.getElementById("webcamToggle");
+  const recognitionToggle = document.getElementById("recognitionToggle");
+
+  if (webcamToggle.checked && !webcamRunning) {
+    navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
+      webcamStream = stream;
+      video.srcObject = stream;
+      video.addEventListener("loadeddata", () => {
+        webcamRunning = true;
+        recognitionToggle.disabled = false;
+        resizeCanvasToMatchVideo();
+      });
+    });
+  } else {
+    if (webcamStream) {
+      webcamRunning = false;
+      recognitionToggle.disabled = true;
+      recognitionToggle.checked = false;
+      recognitionRunning = false;
+      // await predictWebcam();
+      let tracks = webcamStream.getTracks();
+      tracks.forEach(track => track.stop());
+      video.srcObject = null;
+    }
+  }
+}
+
+function resizeCanvasToMatchVideo() {
+  canvasElement.width = video.videoWidth;
+  canvasElement.height = video.videoHeight;
+}
+
+async function toggleRecognition() {
+  if (!webcamRunning) {
+    alert("Webcam is not enabled.");
     return;
   }
-  webcamRunning = !webcamRunning;
-  const enableWebcamButton = document.getElementById("webcamButton");
-  enableWebcamButton.innerText = webcamRunning ? "DISABLE PREDICTIONS" : "ENABLE PREDICTIONS";
 
-  if (webcamRunning) {
-    navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
-      video.srcObject = stream;
-      video.addEventListener("loadeddata", predictWebcam);
-    });
+  if (!gestureRecognizer) {
+    alert("Gesture recognizer not loaded yet. Please wait.");
+    return;
+  }
+  recognitionRunning = !recognitionRunning;
+  console.log(recognitionRunning);
+  if (recognitionRunning) {
+    predictWebcam();
   }
 }
 
@@ -68,16 +121,17 @@ async function predictWebcam() {
   let nowInMs = Date.now();
   if (video.currentTime !== lastVideoTime) {
     lastVideoTime = video.currentTime;
-    results = gestureRecognizer.recognizeForVideo(video, nowInMs);
+    if (video.srcObject == null) {
+      return;
+    }
+    else {
+      results = gestureRecognizer.recognizeForVideo(video, nowInMs);
+    }
   }
 
   canvasCtx.save();
   canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
   const drawingUtils = new DrawingUtils(canvasCtx);
-  canvasElement.style.height = videoHeight;
-  video.style.height = videoHeight;
-  canvasElement.style.width = videoWidth;
-  video.style.width = videoWidth;
 
   if (results.landmarks) {
     for (const landmarks of results.landmarks) {
@@ -87,18 +141,21 @@ async function predictWebcam() {
   }
 
   canvasCtx.restore();
+
   if (results.gestures.length > 0) {
     gestureOutput.style.display = "block";
-    gestureOutput.style.width = videoWidth;
     const categoryName = results.gestures[0][0].categoryName;
     const categoryScore = parseFloat(results.gestures[0][0].score * 100).toFixed(2);
     const handedness = results.handednesses[0][0].displayName;
-    gestureOutput.innerText = `GestureRecognizer: ${categoryName}\n Confidence: ${categoryScore} %\n Handedness: ${handedness}`;
+    gestureOutput.innerText = `Gesture: ${categoryName}\nConfidence: ${categoryScore}%\nHandedness: ${handedness}`;
   } else {
     gestureOutput.style.display = "none";
   }
 
-  if (webcamRunning) {
+  if (webcamRunning && recognitionRunning) {
     window.requestAnimationFrame(predictWebcam);
+  } else {
+    gestureOutput.style.display = "none";
+    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
   }
 }

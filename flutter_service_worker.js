@@ -3,14 +3,14 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
-const RESOURCES = {"flutter_bootstrap.js": "6e25601f386ad1f9c4729716d2dd36d2",
+const RESOURCES = {"flutter_bootstrap.js": "128f86c567c080fb1365ac41fd421e1a",
 "manifest.json": "3f716c5e13fdaf63326fbf707d642292",
 "version.json": "142abdd629d70fca77854ff7a540e79f",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
-"gesture.html": "454efdb3b29a291071fcfaa33775ee21",
+"gesture.html": "fab06999762edcd79841b6575662fa82",
 "index.html": "09d7d9c7b1f6f1b774f0a7db873bdee0",
 "/": "09d7d9c7b1f6f1b774f0a7db873bdee0",
 "main.dart.js": "80e1a232cee420a82285e75897963281",
@@ -23,7 +23,7 @@ const RESOURCES = {"flutter_bootstrap.js": "6e25601f386ad1f9c4729716d2dd36d2",
 "assets/AssetManifest.bin.json": "69a99f98c8b1fb8111c5fb961769fcd8",
 "assets/fonts/MaterialIcons-Regular.otf": "0db35ae7a415370b89e807027510caf0",
 "assets/AssetManifest.bin": "693635b5258fe5f1cda720cf224f158c",
-"gesture_recognition.js": "5a5cd268559c43769df80cf4004e4138",
+"gesture_recognition.js": "b6685ece3039f00b81525e712c794acf",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
 "canvaskit/skwasm.js.symbols": "262f4827a1317abb59d71d6c587a93e2",
 "canvaskit/canvaskit.wasm": "1f237a213d7370cf95f443d896176460",
@@ -35,7 +35,7 @@ const RESOURCES = {"flutter_bootstrap.js": "6e25601f386ad1f9c4729716d2dd36d2",
 "canvaskit/chromium/canvaskit.js": "671c6b4f8fcc199dcc551c7bb125f239",
 "canvaskit/chromium/canvaskit.js.symbols": "a012ed99ccba193cf96bb2643003f6fc",
 "canvaskit/skwasm.js": "694fda5704053957c2594de355805228",
-"styles.css": "30ff97bd5a39d9e41c0541d66e8c7355"};
+"styles.css": "e29a2f3f5b9fd90ed994a8abda1036a3"};
 // The application shell files that are downloaded before a service worker can
 // start.
 const CORE = ["main.dart.js",
